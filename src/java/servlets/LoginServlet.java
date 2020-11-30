@@ -11,13 +11,15 @@ import models.User;
 import services.AccountService;
 import utilities.CookieUtil;
 
-public class LoginServlet extends HttpServlet {
+public class LoginServlet extends HttpServlet 
+{
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException 
+    {
         HttpSession session = request.getSession();
-        session.invalidate(); // just by going to the login page the user is logged out :-) 
+        session.invalidate();
         
         Cookie[] cookies = request.getCookies();
         String email = CookieUtil.getCookieValue(cookies, "email");
@@ -28,11 +30,11 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException 
+    {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         
-        // save email to a cookie
         Cookie cookie = new Cookie("email", email);
         cookie.setMaxAge(60 * 60 * 24 * 365 * 3);
         response.addCookie(cookie);
@@ -41,8 +43,10 @@ public class LoginServlet extends HttpServlet {
         String path = getServletContext().getRealPath("/WEB-INF");
         User user = as.login(email, password, path);
         
-        if (user == null) {
+        if (user == null) 
+        {
             request.setAttribute("email", email);
+            request.setAttribute("message", "failed to login");
             getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
             return;
         }
@@ -50,9 +54,12 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = request.getSession();
         session.setAttribute("email", email);
         
-        if (user.getRole().getRoleId() == 1) {
+        if (user.getRole().getRoleId() == 1) 
+        {
             response.sendRedirect("admin");
-        } else {
+        }
+        else 
+        {
             response.sendRedirect("notes");
         }
     }
